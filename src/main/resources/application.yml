@@ -27,4 +27,4 @@ spring:
     database-change-log-lock-table: _databasechangeloglock
 bot:
   name: "NvdReminderBot"
-  token: 7022755394:AAH46I2mqS0svl888uNqUT9e49hHMWU6SCM
+  token:
