@@ -2,9 +2,10 @@ package com.example.reminderbot.telegram;
 
 
 import com.example.reminderbot.config.BotConfig;
-import com.example.reminderbot.data.ReminderEntity;
-import com.example.reminderbot.data.ReminderRepository;
-import com.example.reminderbot.dto.CurrencyModel;
+import com.example.reminderbot.service.ListCommandHandler;
+import com.example.reminderbot.service.NewCommandHandler;
+import com.example.reminderbot.service.StartCommandHandler;
+import com.example.reminderbot.service.StopCommandHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +15,25 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.time.LocalDateTime;
-
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
+
+    public static final String START = "/start";
+    public static final String STOP = "/stop";
+    public static final String LIST = "/list";
+    public static final String NEW = "/new";
     private final BotConfig botConfig;
 
-    @Autowired
-    ReminderRepository reminderRepository;
+    private StartCommandHandler startCommandHandler;
+
+    private StopCommandHandler stopCommandHandler;
+
+    private NewCommandHandler newCommandHandler;
+
+    private ListCommandHandler listCommandHandler;
 
     @Override
     public String getBotUsername() {
@@ -41,45 +50,40 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-
-            if (messageText.equals("/start")) {
-                startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-            } else {
-                String[] splittedTextMessage = messageText.split(" ");
-
-                if (splittedTextMessage.length != 2) {
-                    sendMessage(chatId, "Sorry the format of message is invalid. PLease use such pattern:" +
-                            "<Title> yyyy-MM-dd like : Parking 2024-03-19");
-                } else {
-                    ReminderEntity reminderEntity = new ReminderEntity();
-                    String remindDate = splittedTextMessage[1];
-                    String title = splittedTextMessage[0];
-                    reminderEntity.setTitle(title);
-                    reminderEntity.setRemindDateTime(LocalDateTime.parse(remindDate+"T10:00:00"));
-                    reminderEntity.setCreateDateTime(LocalDateTime.now());
-                    reminderRepository.insertReminder(reminderEntity);
-                    sendMessage(chatId, "Reminder saved");
-                }
-                sendMessage(chatId, "bla bla");
+            String userName = update.getMessage().getChat().getFirstName();
+            SendMessage outputMessage = switch (messageText) {
+                case START -> startCommandHandler.hande(chatId, userName);
+                case STOP -> stopCommandHandler.hande(chatId, userName);
+                case NEW -> newCommandHandler.hande(chatId, userName);
+                case LIST -> listCommandHandler.hande(chatId, userName);
+                default -> newCommandHandler.createNew(chatId, messageText);
+            };
+            try {
+                execute(outputMessage);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
             }
         }
 
     }
 
-    private void startCommandReceived(Long chatId, String name) {
-        String answer = "Hi, " + name + ", nice to meet you!" + "\n" +
-                "Please add your reminder in format: yyyy-MM-dd like : Parking 2024-03-19";
-        sendMessage(chatId, answer);
+    @Autowired
+    public void setStartCommandHandler(StartCommandHandler startCommandHandler) {
+        this.startCommandHandler = startCommandHandler;
     }
 
-    private void sendMessage(Long chatId, String textToSend) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(String.valueOf(chatId));
-        sendMessage.setText(textToSend);
-        try {
-            execute(sendMessage);
-        } catch (TelegramApiException e) {
+    @Autowired
+    public void setStopCommandHandler(StopCommandHandler stopCommandHandler) {
+        this.stopCommandHandler = stopCommandHandler;
+    }
 
-        }
+    @Autowired
+    public void setNewCommandHandler(NewCommandHandler newCommandHandler) {
+        this.newCommandHandler = newCommandHandler;
+    }
+
+    @Autowired
+    public void setListCommandHandler(ListCommandHandler listCommandHandler) {
+        this.listCommandHandler = listCommandHandler;
     }
 }
