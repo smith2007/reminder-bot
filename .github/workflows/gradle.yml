@@ -48,7 +48,6 @@ jobs:
     #   run: gradle build
 
   dependency-submission:
-
     runs-on: self-hosted
     permissions:
       contents: write
