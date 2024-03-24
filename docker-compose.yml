@@ -1,9 +1,12 @@
-version: '3'
+version: '3.8'
 
 services:
-  back:
-    build: .
+  app:
     image: reminder-bot
-    container_name: reminder-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
