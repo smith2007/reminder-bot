@@ -24,5 +24,11 @@ jobs:
       - name: Build Docker image
         run: docker build -t telegram-bot .
 
-      - name: docker-compose
+      - name: docker-compose-down
+        run: docker-compose down
+
+      - name: docker-compose-pull
+        run: docker-compose pull
+
+      - name: docker-compose-up
         run: docker-compose up -d
