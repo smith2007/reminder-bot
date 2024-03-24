@@ -27,9 +27,6 @@ jobs:
       - name: docker-compose-down
         run: docker-compose down || true
 
-      - name: docker-compose-rm
-        run: "docker rm -vf $(docker ps -aq)"
-
       - name: docker-compose-prune
         run: docker system prune -a -f
 
