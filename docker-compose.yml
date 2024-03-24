@@ -3,7 +3,7 @@ version: '3'
 services:
   back:
     build: .
-    image: reminder-bot
-    container_name: reminder-bot
+    image: example
+    container_name: example
     ports:
       - "8080:8080"
