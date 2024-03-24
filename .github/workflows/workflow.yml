@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -24,11 +24,5 @@ jobs:
       - name: Build Docker image
         run: docker build -t telegram-bot .
 
-  deploy:
-    runs-on: self-hosted
-    needs: build
-    steps:
-      - name: checkout repo
-        uses: actions/checkout@v3
       - name: docker-compose
         run: docker-compose up -d
