@@ -55,7 +55,7 @@ jobs:
 
   prepare-environment:
     runs-on: self-hosted # Запускаем на раннере, который настроили до этого.
-    needs: test # Запускаем только если джоба test прошла успешно
+    needs: build # Запускаем только если джоба test прошла успешно
     steps:
       - name: Stop and remove containers, networks
         run: docker-compose down
