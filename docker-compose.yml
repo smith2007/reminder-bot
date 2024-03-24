@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  back:
+    build: .
+    image: reminder-bot
+    container_name: reminder-bot
+    ports:
+      - "8080:8080"
