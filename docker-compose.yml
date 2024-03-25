@@ -13,3 +13,5 @@ services:
       PG_USER: $PG_USER}
       PG_PWD: ${PG_PWD}
       BOT_TOKEN: ${BOT_TOKEN}
+    env_file:
+      - .env
