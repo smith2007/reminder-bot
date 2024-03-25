@@ -34,9 +34,4 @@ jobs:
         run: docker system prune -a -f
 
       - name: docker-compose-up
-        run: |
-          docker-compose \
-            --env PG_USER="${{ vars.PG_USER }}" \
-            --env PG_PWD="${{ secrets.PG_PWD }}" \
-            --env BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
-            up -d
+        run: docker-compose up -d
