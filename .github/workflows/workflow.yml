@@ -9,6 +9,12 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
+      - name: Use variables
+        run: |
+          echo "repository variable : $PG_USER"
+        env:
+          PG_USER: ${{ vars.PG_USER }}
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -34,4 +40,8 @@ jobs:
         run: docker system prune -a -f
 
       - name: docker-compose-up
-        run: docker-compose up -d
+        run: docker-compose ${PG_USER} ${PG_PWD} ${BOT_TOKEN} up -d
+        env:
+          PG_USER: ${{ vars.PG_USER }}
+          PG_PWD: ${{ secrets.PG_PWD }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
