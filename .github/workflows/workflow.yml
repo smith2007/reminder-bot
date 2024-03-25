@@ -36,7 +36,7 @@ jobs:
       - name: docker-compose-up
         run: |
           docker-compose \
-            -e PG_USER=${{ vars.PG_USER }} \
-            -e PG_PWD=${{ secrets.PG_PWD }} \
-            -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} \
+            --env PG_USER="${{ vars.PG_USER }}" \
+            --env PG_PWD="${{ secrets.PG_PWD }}" \
+            --env BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
             up -d
