@@ -18,6 +18,9 @@ public class ListCommandHandler implements BaseCommandHandler {
     @Override
     public SendMessage hande(Long chatId, String userName) {
         ActiveUser activeUserJpaRepositoryByChatId = activeUserJpaRepository.findByChatId(chatId);
+        if (activeUserJpaRepositoryByChatId == null) {
+            return prepareMessage(chatId, "Please start your session using /start command");
+        }
         List<Reminder> allByChatId = activeUserJpaRepositoryByChatId.getReminders();
         if (allByChatId.isEmpty()) {
             return prepareMessage(chatId, "You haven't created any reminders yet.");

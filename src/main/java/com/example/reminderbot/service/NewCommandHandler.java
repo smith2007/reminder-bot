@@ -60,11 +60,11 @@ public class NewCommandHandler implements BaseCommandHandler {
                         "yyyy-MM-ddTHH:ss like : 2024-03-19T10:00");
             }
 
-            ActiveUser user = activeUserJpaRepository.findByChatId(chatId);
+        ActiveUser user = activeUserJpaRepository.findByChatId(chatId);
 
-            if (user == null) {
-                prepareMessage(chatId, "Please start your session using /start command");
-            }
+        if (user == null) {
+            return prepareMessage(chatId, "Please start your session using /start command");
+        }
 
             Reminder reminder = new Reminder();
             reminder.setTitle(title);
